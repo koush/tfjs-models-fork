@@ -1,12 +1,8 @@
 {
   "name": "@koush/coco-ssd",
-  "version": "2.2.3",
+  "version": "2.2.4",
   "description": "Object detection model (coco-ssd) in TensorFlow.js",
-  "main": "dist/coco-ssd.node.js",
-  "unpkg": "dist/coco-ssd.min.js",
-  "jsdelivr": "dist/coco-ssd.min.js",
-  "jsnext:main": "dist/coco-ssd.es2017.esm.min.js",
-  "module": "dist/coco-ssd.es2017.esm.min.js",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
