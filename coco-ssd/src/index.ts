@@ -129,8 +129,8 @@ export class ObjectDetection {
     // and 4 is the four coordinates of the box.
     const result = await this.model.executeAsync(batched) as tf.Tensor[];
 
-    const scores = result[0].dataSync() as Float32Array;
-    const boxes = result[1].dataSync() as Float32Array;
+    const scores = await result[0].data() as Float32Array;
+    const boxes = await result[1].data() as Float32Array;
 
     // clean the webgl tensors
     batched.dispose();
@@ -151,7 +151,7 @@ export class ObjectDetection {
           boxes2, maxScores, maxNumBoxes, minScore, minScore);
     });
 
-    const indexes = indexTensor.dataSync() as Float32Array;
+    const indexes = await indexTensor.data() as Float32Array;
     indexTensor.dispose();
 
     // restore previous backend
