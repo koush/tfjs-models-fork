@@ -7,6 +7,8 @@
     "node_modules/"
   ],
   "compilerOptions": {
+    "target": "ESNext",
+    "skipLibCheck": true,
     "outDir": "./dist"
   }
 }

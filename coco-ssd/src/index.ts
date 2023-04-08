@@ -112,12 +112,10 @@ export class ObjectDetection {
       img: tf.Tensor3D|ImageData|HTMLImageElement|HTMLCanvasElement|
       HTMLVideoElement,
       maxNumBoxes: number, minScore: number): Promise<DetectedObject[]> {
+    const imgTensor = img instanceof tf.Tensor ? img : await tf.browser.fromPixelsAsync(img);
     const batched = tf.tidy(() => {
-      if (!(img instanceof tf.Tensor)) {
-        img = tf.browser.fromPixels(img);
-      }
       // Reshape to a single-element batch so we can pass it to executeAsync.
-      return tf.expandDims(img);
+      return tf.expandDims(imgTensor);
     });
     const height = batched.shape[1];
     const width = batched.shape[2];
@@ -144,12 +142,15 @@ export class ObjectDetection {
     if (tf.getBackend() === 'webgl') {
       tf.setBackend('cpu');
     }
-    const indexTensor = tf.tidy(() => {
-      const boxes2 =
-          tf.tensor2d(boxes, [result[1].shape[1], result[1].shape[3]]);
-      return tf.image.nonMaxSuppression(
-          boxes2, maxScores, maxNumBoxes, minScore, minScore);
-    });
+    const boxes2 = tf.tensor2d(boxes, [result[1].shape[1], result[1].shape[3]]);
+    let indexTensor: tf.Tensor1D;
+    try {
+      indexTensor = await tf.image.nonMaxSuppressionAsync(
+        boxes2, maxScores, maxNumBoxes, minScore, minScore);
+    }
+    finally {
+      boxes2.dispose();
+    }
 
     const indexes = await indexTensor.data() as Float32Array;
     indexTensor.dispose();
