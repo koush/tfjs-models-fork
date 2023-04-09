@@ -34,6 +34,9 @@ export interface DetectedObject {
   score: number;
 }
 
+type ArgumentTypes<F extends Function> = F extends (...args: infer A) => any ? A : never;
+export type FromPixelsType = ArgumentTypes<typeof tf.browser.fromPixelsAsync>[0];
+
 /**
  * Coco-ssd model loading is configurable using the following config dictionary.
  */
@@ -109,14 +112,16 @@ export class ObjectDetection {
    * of detected objects. Value between 0 and 1. Defaults to 0.5.
    */
   private async infer(
-      img: tf.Tensor3D|ImageData|HTMLImageElement|HTMLCanvasElement|
-      HTMLVideoElement,
+      img: tf.Tensor3D|FromPixelsType,
       maxNumBoxes: number, minScore: number): Promise<DetectedObject[]> {
     const imgTensor = img instanceof tf.Tensor ? img : await tf.browser.fromPixelsAsync(img);
     const batched = tf.tidy(() => {
       // Reshape to a single-element batch so we can pass it to executeAsync.
       return tf.expandDims(imgTensor);
     });
+    if (!(img instanceof tf.Tensor)) {
+      imgTensor.dispose();
+    }
     const height = batched.shape[1];
     const width = batched.shape[2];
 
