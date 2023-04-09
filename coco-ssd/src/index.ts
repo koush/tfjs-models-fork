@@ -139,7 +139,7 @@ export class ObjectDetection {
 
     const prevBackend = tf.getBackend();
     // run post process in cpu
-    if (tf.getBackend() === 'webgl') {
+    if (tf.getBackend() !== 'cpu') {
       tf.setBackend('cpu');
     }
     const boxes2 = tf.tensor2d(boxes, [result[1].shape[1], result[1].shape[3]]);
