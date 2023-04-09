@@ -229,8 +229,7 @@ export class ObjectDetection {
    * of detected objects. Value between 0 and 1. Defaults to 0.5.
    */
   async detect(
-      img: tf.Tensor3D|ImageData|HTMLImageElement|HTMLCanvasElement|
-      HTMLVideoElement,
+      img: tf.Tensor3D|FromPixelsType,
       maxNumBoxes = 20, minScore = 0.5): Promise<DetectedObject[]> {
     return this.infer(img, maxNumBoxes, minScore);
   }
